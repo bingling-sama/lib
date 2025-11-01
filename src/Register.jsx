@@ -6,7 +6,8 @@ export default function Register(){
     const [password,setPassword] = useState('')
     const [email,setEmail] = useState('')
     const [code,setCode] = useState('')
-    const [countdown,setCountdown] = useState('')
+    const [countdown,setCountdown] = useState(0)
+    const [isButtonDisabled,setIsButtonDisabled] = useState(false)
 
     const handleChangeUsername =(e)=>{
         setUsername(e.target.value)
@@ -37,20 +38,60 @@ export default function Register(){
                      email:email
                 })
             })
+            const data = await response.json()
             if(response.ok){
+                setCountdown(10)
                 alert('已发送验证码')
+                setIsButtonDisabled(true)
+                const timer = setInterval(() => {
+                    setCountdown(prev=>{
+                        if(prev<=1){
+                            clearInterval(timer)
+                            setIsButtonDisabled(false)
+                            return 0
+                        }else{
+                            return prev-1
+                        }
+                    })
+                }, 1000);
             } else {
-                window.confirm('发送验证码失败')
+                alert(`发送失败：${data.message || '请稍后重试'}`);
             }
         } catch(error){
             console.error('Error:', error)
             window.confirm('发送验证码时出现错误')
         }
     }
+
+
+    const handleRegister = async()=>{
+        try{
+            const response = await fetch('http://120.24.185.26:8081/register',{
+                method:'POST',
+                mode:'cors',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify({
+                    username:username,
+                    password:password,
+                    email:email,
+                    code:code
+                })
+            })
+            const data = await response.json()
+
+            if(response.ok){
+                alert(`${data.message}`)
+            }else{
+                alert(`${data.massage}`)
+            }
+        }catch(error){
+            console.log('Error:',error);
+            alert('网络错误，注册失败');
+        }
+    }
     
-    // const handleSubmit=()=>(){
-    //     // 在这里添加注册的接口
-    // }
     return(
         <div className='login'>
             <h2>请注册</h2>
@@ -76,9 +117,10 @@ export default function Register(){
             name='code'
             placeholder='请输入验证码'
             onChange={handleChangeCode}
-            value={code} /><button  onClick={handleVerificationCode}>获取验证码</button>
+            value={code} /><button className='getVerificationCode' onClick={handleVerificationCode} disabled={isButtonDisabled}>{countdown>0?`${countdown}秒后重新获取`:'获取验证码'}</button>
             <br />
             <button
+            onClick={handleRegister}
             >注册</button>
         </div>
     )
