@@ -49,7 +49,7 @@ export default function ForgetPassWord() {
 
         const ChangePassword = async () => {
             try{
-                const response = await fetch('http://120.24.185.26:8081/reset-password',{
+                const response = await fetch('http://120.24.185.26:8081/change-password',{
                     method:'POST',
                     mode:'cors',
                     headers:{
@@ -72,11 +72,6 @@ export default function ForgetPassWord() {
                 alert("修改密码失败")
             }
         }
-
-
-
-
-
 
     return (
         <>
