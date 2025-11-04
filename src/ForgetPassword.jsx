@@ -47,7 +47,7 @@ export default function ForgetPassWord() {
     }
 
 
-        const ChangePassword = async () => {
+        const changePassword = async () => {
             try{
                 const response = await fetch('http://120.24.185.26:8081/change-password',{
                     method:'POST',
@@ -86,7 +86,7 @@ export default function ForgetPassWord() {
             <br />
             <button onClick={async()=>{
                 if(submitNewPassword()){
-                    ChangePassword()
+                    changePassword()
                 }
             }}>提交新密码</button>
         </>
