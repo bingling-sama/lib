@@ -52,6 +52,7 @@ export default function SearchBook() {
                     .map((book) => {
                         return (
                             <li key={book.id}>
+                                书号：{book.id}
                                 书名：{book.title}{<br></br>}
                                 作者：{book.author}{<br></br>}
                                 借阅状态：{book.borrowed ? '已借出' : '未借出'}
