@@ -1,37 +1,36 @@
 import request from './request'
-export const addBook = (date) => {
+export const addBook = (data) => {
     return request(
         {
             url: '/book/add',
             method: 'post',
-            date
+            data
         }
     )
 }
-export const borrowBook = (date) => {
+export const borrowBook = (id) => {
     return request(
         {
-            url: '/book/borrow/{id}',
+            url: `/book/borrow/${id}`,
             method: 'post',
-            date
         }
     )
 }
-export const deletedBook = (date) => {
+export const deletedBook = (data) => {
     return request(
         {
             url: '/book/delete/{id}',
             method: 'post',
-            date
+            data
         }
     )
 }
-export const returnBook = (date) => {
+export const returnBook = (data) => {
     return request(
         {
             url: '/book/return/{id}',
             method: 'post',
-            date
+            data
         }
     )
 }
@@ -44,12 +43,12 @@ export const searchBook = (params) => {
         }
     )
 }
-export const updateBook=(date)=>{
+export const updataBook=(data)=>{
 return request(
     {
-        url:'/book/update/{id}',
+        url:'/book/updata/{id}',
         method:'put',
-        date
+        data
     }
 )
 }
