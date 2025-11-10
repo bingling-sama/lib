@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, Outlet, useNavigate } from "react-router-dom"
 export function Home() {
     const navigate=useNavigate()
     useEffect(()=>{
@@ -14,6 +14,7 @@ export function Home() {
                 <li><Link to='/book/search'>查找书籍</Link></li>
                 <li><Link to='/book/return'>归还书籍</Link></li>
             </ul>
+            <Outlet />
         </div>
     )
 } 

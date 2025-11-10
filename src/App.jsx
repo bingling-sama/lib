@@ -4,8 +4,11 @@ import { Children } from 'react'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import SearchBook from './pages/book/Searchbook'
 import { Home } from './pages/Home'
 import BorrowBook from './pages/book/BorrowBook'
+import ReturnBook from './pages/book/ReturnBook'
+// import returnBook from './pages/book/ReturnBook'
 const router = createBrowserRouter([
   {
     path: '/',
@@ -20,16 +23,20 @@ const router = createBrowserRouter([
     element: <Register />
   },
   {
-    path: 'book',
+    path: '/book',
     element: <Home />,
     children: [
-      {
-        path: 'add',
-        element: <AddBook />
-      },
+      // {
+      //   path: 'add',
+      //   element: <AddBook />
+      // },
       {
         path: 'search',
         element: <SearchBook />
+      },
+      {
+        path: 'return',
+        element: <ReturnBook />
       },
       {
         path: 'borrow',

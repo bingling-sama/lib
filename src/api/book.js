@@ -9,44 +9,53 @@ export const addBook = (data) => {
     )
 }
 export const borrowBook = (id) => {
+
+    // const token = localStorage.getItem('token')
+
     return request(
         {
             url: `/book/borrow/${id}`,
             method: 'post',
+            // headers:{
+            //     Authorization:token?`Bearer ${token}`:''
+            // }
         }
     )
 }
 export const deletedBook = (data) => {
     return request(
         {
-            url: '/book/delete/{id}',
+            url: `/book/delete/${data}`,
             method: 'post',
             data
         }
     )
 }
-export const returnBook = (data) => {
+export const returnBook = (id) => {
     return request(
         {
-            url: '/book/return/{id}',
+            url: `/book/return/${id}`,
             method: 'post',
-            data
+            id
         }
     )
 }
-export const searchBook = (params) => {
+export const searchBook = (title,author) => {
     return request(
         {
-            url: '/book/search',
+            url: 'book/search',
             method: 'get',
-            params
+            params:{
+                name:title,
+                author:author
+            }
         }
     )
 }
 export const updataBook=(data)=>{
 return request(
     {
-        url:'/book/updata/{id}',
+        url:`/book/updata/${id}`,
         method:'put',
         data
     }
