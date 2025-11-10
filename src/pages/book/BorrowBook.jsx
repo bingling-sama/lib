@@ -16,10 +16,10 @@ import { useState } from "react";
     return (
  
         <div>
-            <label htmlFor=""></label>
+            <label htmlFor="bookId"></label>
             <input type="text" required placeholder="请输入需要借阅书籍的编号" value={bookId} onChange={(e) => setBookId(e.target.value) } />
             <button onClick={handleBorrow}>确认借书</button>
-            <div>当前登录状态：{bookFliter}</div>
-        </div >
+            <div>当前书籍状态：{bookFliter}</div>
+        </div >  
     )
 }
