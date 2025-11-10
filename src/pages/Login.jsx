@@ -1,70 +1,89 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import ForgetPassWord from "../ForgetPassword";
+import React, { useState } from "react"
+import { Card, Form, Input, Button, Typography, message } from "antd"
+import { Link, useNavigate } from "react-router-dom"
+
+const { Title, Text } = Typography
+
 export default function Login() {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
-        setLoading(true)
-        fetch('http://120.24.185.26:8081/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        }).then(
-            (response) => {
-                if (response.ok) {
-                    response.json().then((data) => {
-                        localStorage.setItem('token', data.data.token)
-                        localStorage.setItem('role',data.data.role)
-                        navigate('/book')
-                    })
-                        .catch(
-                            (error) => {
-                                setError(error.message)
-                            }
-                        )
-                }
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
-            }
+  const onFinish = async (values) => {
+    setLoading(true)
+    try {
+      const response = await fetch("http://120.24.185.26:8081/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
+      })
 
-        )
-            .catch(
-                (error) => {
-                    setError(error.message)
-                }
-            )
-            .finally(
-                () => setLoading(false)
-            )
+      if (!response.ok) {
+        const errText = await response.text()
+        message.error(errText || "登录失败")
+        return
+      }
+
+      const data = await response.json()
+      const token = data?.data?.token
+      const role = data?.data?.role
+
+      if (token) {
+        localStorage.setItem("token", token)
+        localStorage.setItem("role", role || "")
+        message.success("登录成功")
+        navigate("/book")
+      } else {
+        message.error(data?.message || "登录失败，未返回 token")
+      }
+    } catch (err) {
+      console.error("登录异常", err)
+      message.error("网络异常，稍后再试")
+    } finally {
+      setLoading(false)
     }
-    return (
-        <div className="login_page">
-            <div className="login_card">
-                <h2>图书管理系统</h2>
-                <form action="" onSubmit={handleSubmit}>
-                    <label htmlFor="">用户名：</label><input type="text" placeholder="用户名" required onChange={(e) => { setUsername(e.target.value) }} /><br />
-                    <label htmlFor="">密 码：</label><input type="password" placeholder="密码" required onChange={(e) => { setPassword(e.target.value) }} />
-                    {error && <div className="error-message">{error}</div>}
-                    <br />
-                    <div>没有账户？<Link to="/Register">注册</Link>一个</div>
-                    <Link >忘记密码</Link>
-                    <button type="submit" disabled={loading} >
-                        {loading ? '正在登录中..' : '登录'}
-                    </button>
-                </form>
-            </div>
-        </div>
-    )
+  }
 
+  return (
+    <div style={{ display: "flex", justifyContent: "center", padding: 48 }}>
+      <Card style={{ width: 420 }}>
+        <Title level={3} style={{ textAlign: "center" }}>
+          图书管理系统
+        </Title>
 
+        <Form layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            label="用户名"
+            name="username"
+            rules={[{ required: true, message: "请输入用户名" }]}
+          >
+            <Input placeholder="用户名" />
+          </Form.Item>
+
+          <Form.Item
+            label="密码"
+            name="password"
+            rules={[{ required: true, message: "请输入密码" }]}
+          >
+            <Input.Password placeholder="密码" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading}>
+              {loading ? "正在登录中..." : "登录"}
+            </Button>
+          </Form.Item>
+
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Text>
+              没有账户？ <Link to="/register">注册</Link>
+            </Text>
+            <Link to="/forget">忘记密码</Link>
+          </div>
+        </Form>
+      </Card>
+    </div>
+  )
 }
