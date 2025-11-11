@@ -1,12 +1,41 @@
 import React, { useState } from "react"
-import { Form, Input, Button, Table, Card, Empty, Typography } from "antd"
-
+import { Form, Input, Button, Table, Card, Empty, Typography, Popconfirm, message, notification } from "antd"
+import { deletedBook } from "../../api/book"
+import { Admin } from "../../utils/admin"
+ 
 const { Title, Text } = Typography
 
 export default function SearchBook() {
   const [loading, setLoading] = useState(false)
   const [books, setBooks] = useState([])
-
+ 
+  const handleDelete = async (id) => {
+    if (!Admin()) {
+      message.error('没有管理员权限，无法删除')
+      return
+    }
+    const hide = message.loading({ content: '正在删除...', key: `del-${id}` })
+    try {
+      const res = await deletedBook(id)
+      const data = res?.data ?? res
+      if (data && data.code === 200) {
+        notification.success({
+          message: '删除成功',
+          description: data.message || '书籍已删除',
+          placement: 'topRight',
+        })
+        setBooks((prev) => prev.filter((b) => b.id !== id))
+      } else {
+        message.error({ content: data?.message || '删除失败' })
+      }
+    } catch (err) {
+      console.error('删除书籍失败', err)
+      message.error({ content: '网络异常，稍后再试' })
+    } finally {
+      hide()
+    }
+  }
+ 
   const columns = [
     {
       title: "书号",
@@ -37,6 +66,22 @@ export default function SearchBook() {
       key: "borrowed",
       width: 120,
       render: (val) => (val ? "已借出" : "未借出"),
+    },
+    {
+      title: "操作",
+      key: "action",
+      width: 140,
+      render: (_, record) =>
+        Admin() ? (
+          <Popconfirm
+            title="确认删除该书籍？"
+            onConfirm={() => handleDelete(record.id)}
+            okText="删除"
+            cancelText="取消"
+          >
+            <Button danger>删除</Button>
+          </Popconfirm>
+        ) : null,
     },
   ]
 

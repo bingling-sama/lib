@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Form, Input, Radio, Button, Card, message, Typography } from "antd"
+import { Form, Input, Radio, Button, Card, message, notification, Typography } from "antd"
 import { useNavigate } from "react-router-dom"
 import { addBook } from "../../api/book"
 import { Admin } from "../../utils/admin"
@@ -28,11 +28,17 @@ export default function AddBook() {
     const hide = message.loading({ content: '正在添加中...', key: 'addBook' })
     try {
       const res = await addBook(values)
-      if (res && res.ok && res.code === 200) {
-        message.success({ content: res.message || '添加成功', key: 'addBook' })
+      const data = res?.data ?? res
+      if (data && data.ok && data.code === 200) {
+        message.success({ content: data.message || '添加成功', key: 'addBook' })
+        notification.success({
+          message: '添加成功',
+          description: data.message || '书籍已添加成功',
+          placement: 'topRight',
+        })
         form.resetFields()
       } else {
-        message.error({ content: res?.message || '添加失败', key: 'addBook' })
+        message.error({ content: data?.message || '添加失败', key: 'addBook' })
       }
     } catch (err) {
       console.error('请求接口失败', err)
