@@ -21,18 +21,24 @@ export default function BorrowBook() {
       return
     }
     try {
-      const result = await borrowBook(bookId)
-      if (result && result.code === 200) {
-        setStatusText(result.message || "借书成功")
-        openNotification("success", result.message || "借书成功")
+      const res = await borrowBook(bookId)
+      const data = res?.data ?? res
+      if (data && data.code === 200) {
+        setStatusText(data.message || "借书成功")
+        openNotification("success", data.message || "借书成功")
       } else {
-        setStatusText(result?.message || "借书失败")
-        openNotification("error", result?.message || "借书失败")
+        setStatusText(data?.message || "借书失败")
+        openNotification("error", data?.message || "借书失败")
       }
     } catch (error) {
       console.error("借书失败", error)
-      setStatusText("网络异常，稍后重试")
-      openNotification("error", "网络异常，稍后重试")
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.statusText ||
+        error?.message ||
+        "网络异常，稍后重试"
+      setStatusText(msg)
+      openNotification("error", msg)
     }
   }
 
