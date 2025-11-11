@@ -1,5 +1,6 @@
 import { useState } from "react";
-import {  Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ForgetPassWord from "../ForgetPassword";
 export default function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -20,30 +21,31 @@ export default function Login() {
                 password: password
             })
         }).then(
-            (response)=>{
+            (response) => {
                 if (response.ok) {
-                    response.json().then((data)=>{
-                        localStorage.setItem('token',data.data.token)
+                    response.json().then((data) => {
+                        localStorage.setItem('token', data.data.token)
+                        localStorage.setItem('role',data.data.role)
                         navigate('/book')
                     })
-                    .catch(
-                        (error) => {
-                            setError(error.message)
-                        }
-                    )
+                        .catch(
+                            (error) => {
+                                setError(error.message)
+                            }
+                        )
                 }
-                
+
             }
-            
+
         )
-        .catch(
-            (error)=>{
-                setError(error.message)
-            }
-        )
-        .finally(
-            ()=>setLoading(false)
-        )
+            .catch(
+                (error) => {
+                    setError(error.message)
+                }
+            )
+            .finally(
+                () => setLoading(false)
+            )
     }
     return (
         <div className="login_page">
