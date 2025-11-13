@@ -22,12 +22,11 @@ export const borrowBook = (id) => {
         }
     )
 }
-export const deletedBook = (data) => {
+export const deletedBook = (id) => {
     return request(
         {
-            url: `/book/delete/${data}`,
+            url: `/book/delete/${id}`,
             method: 'post',
-            data
         }
     )
 }
@@ -36,7 +35,7 @@ export const returnBook = (id) => {
         {
             url: `/book/return/${id}`,
             method: 'post',
-            id
+            
         }
     )
 }
