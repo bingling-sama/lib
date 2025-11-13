@@ -1,37 +1,109 @@
-import { useEffect } from "react"
-import { Link, Outlet, useNavigate } from "react-router-dom"
+import React, { useEffect, useMemo } from "react"
+import { Outlet, useNavigate } from "react-router-dom"
+import { Layout, Menu, Button, Typography, message } from "antd"
+import {
+  BookOutlined,
+  SearchOutlined,
+  SwapOutlined,
+  PlusOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons"
+
+const { Sider, Content } = Layout
+const { Title } = Typography
+
 export function Home() {
-    const navigate=useNavigate()
-    useEffect(()=>{
-        if(localStorage.getItem('token')===''){
-            navigate('/')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/")
     }
-    })
-    const handleAddbook=()=>{
-        const role=localStorage.getItem('role')
-        if (role =='administrator'){
-            navigate('/book/add')
-        }else{
-            alert('sb 不让你进来')
-        }
+  }, [navigate])
+
+  const role = localStorage.getItem("role")
+
+  const items = useMemo(() => {
+    return [
+      {
+        key: "borrow",
+        icon: <BookOutlined />,
+        label: "借阅书籍",
+      },
+      {
+        key: "search",
+        icon: <SearchOutlined />,
+        label: "查找书籍",
+      },
+      {
+        key: "return",
+        icon: <SwapOutlined />,
+        label: "归还书籍",
+      },
+      {
+        key: "add",
+        icon: <PlusOutlined />,
+        label: "增减书籍（仅管理员）",
+        disabled: role !== "administrator",
+      },
+      {
+        key: "logout",
+        icon: <LogoutOutlined />,
+        label: "退出登录",
+      },
+    ]
+  }, [role])
+
+  const onMenuSelect = ({ key }) => {
+    if (key === "logout") {
+      localStorage.removeItem("token")
+      localStorage.removeItem("role")
+      message.success("已退出登录")
+      navigate("/")
+      return
     }
-        const handleLoginOut=()=>{
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
-        navigate('/')
+    if (key === "add" && role !== "administrator") {
+      message.warning("需要管理员权限才能访问此项")
+      return
     }
-    
-    return (
-        <div className="left_part">
-            <ul>
-                <li><Link to='/book/borrow'>借阅书籍</Link></li>
-                <li><Link to='/book/search'>查找书籍</Link></li>
-                <li><Link to='/book/return'>归还书籍</Link></li>
-                <li onClick={handleAddbook}>增减书籍（仅管理员</li>
-                <li onClick={handleLoginOut}>退出登录</li>
-                <Outlet/>
-            </ul>
-            <Outlet />
+    navigate(`/book/${key}`)
+  }
+
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider width={220} style={{ background: "#fff", paddingTop: 16 }}>
+        <div style={{ padding: "0 24px 16px" }}>
+          <Title level={5} style={{ margin: 0 }}>
+            图书管理系统
+          </Title>
         </div>
-    )
-} 
+        <Menu
+          mode="inline"
+          items={items}
+          onSelect={onMenuSelect}
+          style={{ height: "100%", borderRight: 0 }}
+        />
+        <div style={{ padding: 16 }}>
+          <Button
+            block
+            type="default"
+            onClick={() => {
+              localStorage.removeItem("token")
+              localStorage.removeItem("role")
+              message.success("已退出登录")
+              navigate("/")
+            }}
+          >
+            退出登录
+          </Button>
+        </div>
+      </Sider>
+
+      <Layout>
+        <Content style={{ padding: 24 }}>
+          <Outlet />
+        </Content>
+      </Layout>
+    </Layout>
+  )
+}

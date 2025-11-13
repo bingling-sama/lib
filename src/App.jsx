@@ -7,7 +7,7 @@ import Register from './pages/Register'
 import SearchBook from './pages/book/Searchbook'
 import { Home } from './pages/Home'
 import BorrowBook from './pages/book/BorrowBook'
-// import ReturnBook from './pages/book/SearchBook'
+import ReturnBook from './pages/book/ReturnBook'
 import SearchBook from './pages/book/SearchBook'
 import AddBook from './pages/book/Addbook'
 const router = createBrowserRouter([
@@ -42,11 +42,11 @@ const router = createBrowserRouter([
       {
         path: 'borrow',
         element: <BorrowBook />
+      },
+      {
+        path:'return',
+        element:<ReturnBook/>
       }
-      // {
-      //   path:'return',
-      //   element:<ReturnBook/>
-      // }
     ]
   }
 ])
